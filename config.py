@@ -1,0 +1,7 @@
+class Config:
+    SECRET_KEY = '8682E4DFC6998DA8F6871F4E48E3C'
+    DATABASE_NAME = 'company'
+    DATABASE_USER = 'postgres'
+    DATABASE_PASSWORD = '1234'
+    DATABASE_HOST = 'localhost'
+    DATABASE_PORT = '5432'
