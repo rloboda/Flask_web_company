@@ -1,3 +1,4 @@
+import requests
 from flask import current_app, jsonify, render_template, current_app as app, request, session, redirect, flash, url_for
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -113,3 +114,86 @@ def get_users():
     conn.close()
     
     return jsonify(users)
+
+
+"""@app.route('/products')
+def get_products():
+    url = "https://mcdonald-s-products-api.p.rapidapi.com/us/currentMenu"
+
+    headers = {
+        "x-rapidapi-key": "818814693dmsh15b4c01d27d115ap1fd441jsn141093198a76",
+        "x-rapidapi-host": "mcdonald-s-products-api.p.rapidapi.com"
+    }
+
+    response = requests.get(url, headers=headers)
+    data = response.json()
+    categories = data.get('categories', [])
+    category_names = [category['name'] for category in categories]
+    
+    
+    return jsonify({'categories' : category_names})
+    #print(response.json())"""
+
+currencies = [
+    {'name': 'US Dollar', 'code': 'USD'},
+    {'name': 'Euro', 'code': 'EUR'},
+    {'name': 'British Pound', 'code': 'GBP'},
+    {'name': 'Ukrainian hryvnia', 'code': 'UAH'},
+    {'name': 'Polish zloty', 'code': 'PLN'},
+]
+
+@app.route('/currency_convert', methods=['GET', 'POST'])
+def convert_currency():
+    if request.method == 'POST':
+        from_currency = request.form['from_currency']
+        to_currency = request.form['to_currency']
+        amount = float(request.form['amount'])
+
+        url = "https://currency-conversion-and-exchange-rates.p.rapidapi.com/convert"
+        querystring = {"from": from_currency, "to": to_currency, "amount": amount}
+
+        headers = {
+            "x-rapidapi-key": "818814693dmsh15b4c01d27d115ap1fd441jsn141093198a76",
+            "x-rapidapi-host": "currency-conversion-and-exchange-rates.p.rapidapi.com"
+        }
+
+        response = requests.get(url, headers=headers, params=querystring)
+        data = response.json()
+        date = data.get('date', [])
+        result_amount = data.get('result', [])
+        
+        return render_template('convert_currency.html', 
+                            currencies=currencies,
+                            conversion_result=True,
+                            date=date,
+                            start_amount=amount,
+                            from_currency=from_currency,
+                            to_currency=to_currency,
+                            result_amount=result_amount
+                            )
+    else:
+        return render_template('convert_currency.html', currencies=currencies)
+
+
+    """response = {
+            "date": "2024-08-15",
+            "info": {
+                "rate": 0.911165,
+                "timestamp": 1723745764
+            },
+            "query": {
+                "amount": 750,
+                "from": "USD",
+                "to": "EUR"
+            },
+            "result": 683.37375,
+            "success": True
+            }
+    date = response['date']
+    start_amount = response['query']['amount']
+    from_currency = response['query']['from']
+    to_currency = response['query']['to']
+    result_amount = round(response['result'], 2)
+"""
+    
+    

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {{ super() }}
+
+    <div class="container my-5">
+        <!-- Currency Conversion Form -->
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm mb-5">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0" >Currency Converter</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('convert_currency') }}">
+
+                            <!-- Currency Amount -->
+                            <div class="form-group">
+                                <label for="amount" >Currency Amount</label>
+                                <input type="number" step="0.01" class="form-control" id="amount" name="amount" placeholder="Enter amount" required>
+                            </div>
+
+                            <!-- Convert From Currency -->
+                            <div class="form-group mt-3">
+                                <label for="from_currency">Convert From</label>
+                                <select class="form-control" id="from_currency" name="from_currency" required>
+                                    {% for currency in currencies %}
+                                        <option value="{{ currency.code }}">{{ currency.name }} ({{ currency.code }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Convert To Currency -->
+                            <div class="form-group mt-3">
+                                <label for="to_currency">Convert To</label>
+                                <select class="form-control" id="to_currency" name="to_currency" required>
+                                    {% for currency in currencies %}
+                                        <option value="{{ currency.code }}">{{ currency.name }} ({{ currency.code }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-success mt-4">Convert</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conversion Details Card (Displayed After Form Submission) -->
+        {% if conversion_result %}
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Conversion Details</h5>
+
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Date:</strong> {{ date }}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Original Amount:</strong> {{ start_amount }} {{ from_currency }}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Converted Amount:</strong> {{ result_amount }} {{ to_currency }}
+                                </li>
+                            </ul>
+
+                            <div class="alert alert-info mt-4" role="alert">
+                                <h6 class="alert-heading">Conversion Successful!</h6>
+                                <p class="mb-0">You have converted <strong>{{ start_amount }} {{ from_currency }}</strong> to <strong>{{ result_amount }} {{ to_currency }}</strong>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock content %}
