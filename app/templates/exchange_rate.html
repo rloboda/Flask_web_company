@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-5">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0" >Exchange Rates</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('exchange_rate') }}">
+                        <div class="form-group">
+                            <label for="start_date">Start Date :</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date"
+                                placeholder="Enter start date" required>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="end_date">End Date :</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date"
+                                placeholder="Enter end date" required>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="base_currency">From currency :</label>
+                            <select class="form-control" id="base_currency" name="base_currency" required>
+                                {% for currency in currencies %}
+                                <option value="{{ currency.code }}">{{ currency.name }} ({{ currency.code }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="to_currency">To currency :</label>
+                            <select class="form-control" id="to_currency" name="to_currency" required>
+                                {% for currency in currencies %}
+                                <option value="{{ currency.code }}">{{ currency.name }} ({{ currency.code }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success mt-4">Exchange</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    {% if conversion_result %}
+    <p><strong>Base Currency:</strong> {{ data.base }}</p>
+    <p><strong>Start Date:</strong> {{ data.start_date }}</p>
+    <p><strong>End Date:</strong> {{ data.end_date }}</p>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Currency</th>
+                <th>Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for date, value in filtered_data.items() %}
+            {% for currency, rate in value.items() %}
+            <tr>
+                <td>{{ date }}</td>
+                <td>{{ currency }}</td>
+                <td>{{ rate }}</td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+{% endblock content %}

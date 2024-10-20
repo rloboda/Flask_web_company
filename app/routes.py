@@ -1,4 +1,4 @@
-import requests
+import requests, json
 from flask import current_app, jsonify, render_template, current_app as app, request, session, redirect, flash, url_for
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -116,24 +116,6 @@ def get_users():
     return jsonify(users)
 
 
-"""@app.route('/products')
-def get_products():
-    url = "https://mcdonald-s-products-api.p.rapidapi.com/us/currentMenu"
-
-    headers = {
-        "x-rapidapi-key": "818814693dmsh15b4c01d27d115ap1fd441jsn141093198a76",
-        "x-rapidapi-host": "mcdonald-s-products-api.p.rapidapi.com"
-    }
-
-    response = requests.get(url, headers=headers)
-    data = response.json()
-    categories = data.get('categories', [])
-    category_names = [category['name'] for category in categories]
-    
-    
-    return jsonify({'categories' : category_names})
-    #print(response.json())"""
-
 currencies = [
     {'name': 'US Dollar', 'code': 'USD'},
     {'name': 'Euro', 'code': 'EUR'},
@@ -175,25 +157,35 @@ def convert_currency():
         return render_template('convert_currency.html', currencies=currencies)
 
 
-    """response = {
-            "date": "2024-08-15",
-            "info": {
-                "rate": 0.911165,
-                "timestamp": 1723745764
-            },
-            "query": {
-                "amount": 750,
-                "from": "USD",
-                "to": "EUR"
-            },
-            "result": 683.37375,
-            "success": True
-            }
-    date = response['date']
-    start_amount = response['query']['amount']
-    from_currency = response['query']['from']
-    to_currency = response['query']['to']
-    result_amount = round(response['result'], 2)
-"""
+@app.route('/exchange_rate', methods=['GET', 'POST'])
+def exchange_rate():    
+    if request.method == 'POST':
+        start_date = request.form['start_date']
+        end_date = request.form['end_date']
+        base_currency = request.form['base_currency']
+        to_currency = request.form['to_currency']
+
+
+        url = "https://currency-conversion-and-exchange-rates.p.rapidapi.com/timeseries"
+        querystring = {"start_date": start_date,"end_date": end_date, "base": base_currency}
+
+        headers = {
+            "x-rapidapi-key": "818814693dmsh15b4c01d27d115ap1fd441jsn141093198a76",
+            "x-rapidapi-host": "currency-conversion-and-exchange-rates.p.rapidapi.com"
+        }
+
+        response = requests.get(url, headers=headers, params=querystring)
+        data = response.json()
+
+
+        filtered_data = {}
+        for date in data['rates'].keys():
+            filtered_rates = {currency: rate for currency, rate in data['rates'][date].items() if currency == to_currency}
+            filtered_data[date] = filtered_rates
+
+
+        return render_template('exchange_rate.html', filtered_data=filtered_data, date=date, data=data, currencies=currencies, conversion_result=True,)
     
-    
+    else:
+        return render_template('exchange_rate.html', currencies=currencies)
+

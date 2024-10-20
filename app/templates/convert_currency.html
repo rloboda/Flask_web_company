@@ -13,14 +13,10 @@
                     </div>
                     <div class="card-body">
                         <form method="POST" action="{{ url_for('convert_currency') }}">
-
-                            <!-- Currency Amount -->
                             <div class="form-group">
                                 <label for="amount" >Currency Amount</label>
                                 <input type="number" step="0.01" class="form-control" id="amount" name="amount" placeholder="Enter amount" required>
                             </div>
-
-                            <!-- Convert From Currency -->
                             <div class="form-group mt-3">
                                 <label for="from_currency">Convert From</label>
                                 <select class="form-control" id="from_currency" name="from_currency" required>
@@ -29,8 +25,6 @@
                                     {% endfor %}
                                 </select>
                             </div>
-
-                            <!-- Convert To Currency -->
                             <div class="form-group mt-3">
                                 <label for="to_currency">Convert To</label>
                                 <select class="form-control" id="to_currency" name="to_currency" required>
@@ -39,8 +33,6 @@
                                     {% endfor %}
                                 </select>
                             </div>
-
-                            <!-- Submit Button -->
                             <button type="submit" class="btn btn-success mt-4">Convert</button>
                         </form>
                     </div>
